@@ -82,3 +82,14 @@ Build and maintain a Traditional Chinese research literature and structured-note
 - JSON export size increases with attachment size; keep an explicit 100 MiB import-file limit. Browser quota, private mode, and cross-device access remain limitations.
 - Do not use `innerHTML` to render user-supplied attachment names without HTML escaping. Object URLs for preview/download must be revoked.
 - Regression checks: existing V1 IndexedDB data remains after upgrade; PDF upload/view/download; DOCX upload/download; replace/remove; oversized or renamed invalid files rejected; backup V2 restores file bytes; V1 restore remains compatible; invalid attachment backup leaves all stores unchanged; paper deletion clears attachment; note links and search still work.
+
+
+## V1.2 extension — opt-in demo dataset
+- `js/demo.js` contains **clearly fictional**, public-safe demo records only. Do not copy actual research notes, thesis attachments, or personal documents into the public repository.
+- The dashboard offers a user-initiated **載入示範資料** action. Never silently seed records on page load.
+- Demo records must be conspicuously labeled `【示範資料】` / `【示範筆記】` and tagged `示範資料`; do not invent real citations, DOI, authors, research findings, or links.
+- Each demo note must use an existing, versioned template and reference at least one demo paper. Validate via `js/service.js` before writing.
+- Insert all demo papers and notes in **one atomic IndexedDB transaction**, using `add()` instead of `put()` so existing records cannot be overwritten. If any demo ID already exists, reject the whole insertion and leave data untouched.
+- Demo records are stored only in the visitor's browser, can be edited/deleted like other records, and are included in JSON backups. No attachments are included.
+- Keep existing records untouched; no implicit deletion, reset, or automatic import. Visitors with no data can still inspect a fully working UI.
+- Regression checks: empty database -> 3 papers and 2 notes; relationships valid; reload persists; repeated click does not duplicate; existing data remains intact; JSON backup includes demos; browser on another device starts empty until user opts in.
