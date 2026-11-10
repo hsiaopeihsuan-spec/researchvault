@@ -70,3 +70,15 @@ Build and maintain a Traditional Chinese research literature and structured-note
 - Dashboard reflects real data; mobile and desktop usable.
 - GitHub Pages deploys correctly.
 - AI can add an Experiment Log template without breaking existing records.
+
+## V1.1 extension — PDF / Word attachments (implemented)
+- V1.1 adds **one optional attachment per paper**, in addition to the existing optional URL. Both may coexist; neither is required. Supported formats are `.pdf` and `.docx` only (not legacy `.doc`).
+- `js/db.js` upgrades the IndexedDB version **from 1 to 2**, creating `attachments` with `keyPath: 'paperId'`. Do not delete or recreate existing `papers`, `notes`, or `settings` stores during upgrade.
+- Attachment record: `{ paperId, name, mime, blob }`; Blob is stored locally in IndexedDB, never committed to GitHub. Attachment size is 1 byte–20 MiB, and extension/MIME/signature must match.
+- The UI must let users select, replace, view/download, and explicitly remove an attachment. Replacing/removing an attachment must not remove the paper, URL, or notes.
+- Save a paper and its attachment change within **one IndexedDB readwrite transaction**. Deleting an unreferenced paper removes its attachment in the same transaction. Block deletion of papers still referenced by notes.
+- Export schema **version 2** contains `attachments` with base64 file bytes, file name, MIME, and paper ID. Preserve legacy **version 1** import (no attachments). V2 import must validate attachment types, signatures, size, unique paper IDs, and relationships before any write.
+- Import replaces `papers`, `notes`, and `attachments` in **one transaction**. Importing a V1 backup clears any existing attachments after explicit overwrite confirmation. Never silently pretend that a text-only V1 backup includes attachments.
+- JSON export size increases with attachment size; keep an explicit 100 MiB import-file limit. Browser quota, private mode, and cross-device access remain limitations.
+- Do not use `innerHTML` to render user-supplied attachment names without HTML escaping. Object URLs for preview/download must be revoked.
+- Regression checks: existing V1 IndexedDB data remains after upgrade; PDF upload/view/download; DOCX upload/download; replace/remove; oversized or renamed invalid files rejected; backup V2 restores file bytes; V1 restore remains compatible; invalid attachment backup leaves all stores unchanged; paper deletion clears attachment; note links and search still work.
