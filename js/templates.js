@@ -1,0 +1,2 @@
+export const TEMPLATES=[{id:'literature-review',version:1,name:'文獻閱讀筆記',description:'整理文獻內容與研究價值',fields:[['objective','研究目的'],['methods','研究方法'],['results','主要結果'],['limitations','研究限制'],['relevance','與自身研究的關聯'],['questions','待確認事項']]},{id:'research-idea',version:1,name:'研究構想筆記',description:'規劃研究問題、方法與可行性',fields:[['question','研究問題'],['background','背景動機'],['hypothesis','研究假設'],['method','預計方法'],['feasibility','可行性與限制'],['questions','待確認事項']]}];
+export const getTemplate=(id,version=1)=>TEMPLATES.find(t=>t.id===id&&t.version===version);
